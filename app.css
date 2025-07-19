@@ -1,0 +1,127 @@
+/* General Styles */
+body {
+  font-family: sans-serif;
+  margin: 0;
+  background-color: #f8f9fa;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Navbar */
+.navbar {
+  background: #fff;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.navbar-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.navbar-subtitle {
+  font-size: 14px;
+  color: #888;
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reset-btn {
+  background-color: #ddd;
+  color: #333;
+}
+
+.download-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Table */
+.table-container {
+  overflow-x: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.comment-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comment-table th,
+.comment-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.comment-table th {
+  background: #343a40;
+  color: white;
+  cursor: pointer;
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  margin: 2px;
+  border: none;
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.page-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+/* Misc */
+.no-results {
+  text-align: center;
+  color: #666;
+  margin-top: 20px;
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 18px;
+}
