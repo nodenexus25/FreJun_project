@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>React Comments SPA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+
+    const { useState, useEffect } = React;
+
+    function App() {
+      const [comments, setComments] = useState([]);
+      const [posts, setPosts] = useState({});
+      const [search, setSearch] = useState('');
+      const [page, setPage] = useState(1);
+      const [perPage] = useState(10);
+      const [editedData, setEditedData] = useState(() => {
+        return JSON.parse(localStorage.getItem('edits') || '{}');
+      });
+
+      useEffect(() => {
+        const fetchComments = async () => {
+          const res = await fetch('https://jsonplaceholder.typicode.com/comments');
+          const data = await res.json();
+          setComments(data);
+        };
+
+        const fetchPosts = async () => {
+          const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+          const data = await res.json();
+          const postMap = {};
+          data.forEach(post => postMap[post.id] = post.title);
+          setPosts(postMap);
+        };
+
+        fetchComments();
+        fetchPosts();
+      }, []);
+
+      const handleEdit = (id, field, value) => {
+        const updated = {
+          ...editedData,
+          [id]: { ...editedData[id], [field]: value },
+        };
+        setEditedData(updated);
+        localStorage.setItem('edits', JSON.stringify(updated));
+      };
+
+      const filtered = comments.filter(comment =>
+        comment.name.toLowerCase().includes(search.toLowerCase()) ||
+        comment.email.toLowerCase().includes(search.toLowerCase()) ||
+        comment.body.toLowerCase().includes(search.toLowerCase())
+      );
+
+      const paginated = filtered.slice((page - 1) * perPage, page * perPage);
+      const totalPages = Math.ceil(filtered.length / perPage);
+
+      return (
+        <div className="max-w-7xl mx-auto p-6">
+          <nav className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-gray-800">Comments Dashboard</h1>
+            <input
+              type="text"
+              placeholder="Search by name, email, or body..."
+              className="border px-4 py-2 rounded shadow-sm w-72 focus:outline-none focus:ring"
+              value={search}
+              onChange={e => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+          </nav>
+
+          <div className="overflow-x-auto bg-white rounded shadow-md">
+            <table className="min-w-full text-sm text-left">
+              <thead className="bg-gray-200 text-gray-700 font-semibold">
+                <tr>
+                  <th className="p-3 border">Email</th>
+                  <th className="p-3 border">Name</th>
+                  <th className="p-3 border">Body</th>
+                  <th className="p-3 border">Post</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginated.map(comment => {
+                  const edited = editedData[comment.id] || {};
+                  return (
+                    <tr key={comment.id} className="hover:bg-gray-100">
+                      <td className="p-3 border text-blue-600">{comment.email}</td>
+                      <td className="p-3 border">
+                        <input
+                          className="w-full border px-2 py-1 rounded"
+                          value={edited.name ?? comment.name}
+                          onChange={e => handleEdit(comment.id, 'name', e.target.value)}
+                        />
+                      </td>
+                      <td className="p-3 border">
+                        <textarea
+                          className="w-full border px-2 py-1 rounded"
+                          rows="2"
+                          value={edited.body ?? comment.body}
+                          onChange={e => handleEdit(comment.id, 'body', e.target.value)}
+                        />
+                      </td>
+                      <td className="p-3 border text-gray-700">
+                        {posts[comment.postId] || <span className="text-gray-400">Loading...</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex justify-between items-center mt-6">
+            <button
+              onClick={() => setPage(prev => Math.max(1, prev - 1))}
+              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span className="text-gray-700">Page {page} of {totalPages}</span>
+            <button
+              onClick={() => setPage(prev => Math.min(totalPages, prev + 1))}
+              className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              disabled={page === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
